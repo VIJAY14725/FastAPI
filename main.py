@@ -22,14 +22,12 @@ def get_todo(todo_id: int):
         raise HTTPException(status_code=404, detail="Todo not found")
     return todos_db[todo_id]
 
-
 @app.post("/todos", response_model=Todo, status_code=201, tags=["Todos"])
 def create_todo(todo: TodoCreate):
     todo_id = max(todos_db.keys(), default=0) + 1
     new_todo = Todo(id=todo_id, **todo.dict())
     todos_db[todo_id] = new_todo
     return new_todo
-
 
 @app.put("/todos/{todo_id}", response_model=Todo, tags=["Todos"])
 def update_todo(todo_id: int, todo: TodoUpdate):
@@ -38,7 +36,6 @@ def update_todo(todo_id: int, todo: TodoUpdate):
     updated_todo = todos_db[todo_id].copy(update=todo.dict(exclude_unset=True))
     todos_db[todo_id] = updated_todo
     return updated_todo
-
 
 @app.delete("/todos/{todo_id}", status_code=204, tags=["Todos"])
 def delete_todo(todo_id: int):
