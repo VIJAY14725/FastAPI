@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from typing import List
-from models import Todo, TodoCreate, TodoUpdate
+from models import Todo, Create, Update
 from database import todos_db
 
 app = FastAPI(title="Todo API", version="1.0.0")
@@ -23,14 +23,14 @@ def get_todo(todo_id: int):
     return todos_db[todo_id]
 
 @app.post("/todos", response_model=Todo, status_code=201, tags=["Todos"])
-def create_todo(todo: TodoCreate):
+def create_todo(todo: Create):
     todo_id = max(todos_db.keys(), default=0) + 1
     new_todo = Todo(id=todo_id, **todo.dict())
     todos_db[todo_id] = new_todo
     return new_todo
 
 @app.put("/todos/{todo_id}", response_model=Todo, tags=["Todos"])
-def update_todo(todo_id: int, todo: TodoUpdate):
+def update_todo(todo_id: int, todo: Update):
     if todo_id not in todos_db:
         raise HTTPException(status_code=404, detail="Todo not found")
     updated_todo = todos_db[todo_id].copy(update=todo.dict(exclude_unset=True))
